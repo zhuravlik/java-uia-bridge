@@ -18,7 +18,10 @@
 */
 package zhuravlik.automation.util;
 
+import com.sun.jna.Pointer;
+import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
+import java.util.ArrayList;
 
 public class NativeUtils {
     
@@ -30,13 +33,36 @@ public class NativeUtils {
     
     public static String stripName(char[] name) {
         int i = 0;
-        while (name[i] != '\0') {
+        while (i < name.length && name[i] != '\0') {
             i++;
         }
 
         char[] name1 = new char[i];
         System.arraycopy(name, 0, name1, 0, i);
         return new String(name1);        
+    }
+    
+    public static String unknownLengthStringFromPointer(Pointer p) {
+        char c;
+        ArrayList<Character> lst = new ArrayList<Character>();
+        
+        int i = 0;
+        while (true) {
+            c = p.getChar(i);
+            lst.add(c);
+            if (c == '\0')
+                break;
+            i++;
+        }
+        
+        char[] arr = new char[lst.size()];
+        
+        for (int j = 0; j < lst.size(); j++)
+            arr[j] = lst.get(j);
+        
+        
+        
+        return new String(arr);
     }
     
     public static Guid.GUID.ByReference guidFromArray(Object[] vals) {

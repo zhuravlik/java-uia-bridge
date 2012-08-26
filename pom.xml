@@ -47,5 +47,13 @@
         <artifactId>jacob</artifactId>
         <version>1.14.3</version>
     </dependency>    
+    
+    <dependency>
+        <groupId>ca.digitalrapids</groupId>
+        <artifactId>com4jna</artifactId>
+        <version>
+            1.0.1-SNAPSHOT
+        </version>
+        </dependency>
   </dependencies>
 </project>

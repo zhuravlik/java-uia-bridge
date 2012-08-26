@@ -19,6 +19,7 @@
 package zhuravlik.automation;
 
 import com.jacob.activeX.ActiveXComponent;
+import com.jacob.com.ComThread;
 import com.jacob.com.Dispatch;
 import com.jacob.com.SafeArray;
 import com.jacob.com.Variant;
@@ -26,10 +27,14 @@ import com.sun.jna.platform.win32.*;
 import com.sun.jna.*;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.platform.win32.jnacom.ComObject;
+import com.sun.jna.platform.win32.jnacom.IUnknown;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import java.awt.Point;
 import java.util.List;
+import zhuravlik.automation.jna.IUIAutomation;
+import zhuravlik.automation.jna.IUIAutomationElement;
 import zhuravlik.automation.jna.Oleacc;
 import zhuravlik.automation.util.AutomationObject;
 import zhuravlik.automation.util.NativeUtils;
@@ -40,6 +45,9 @@ public class Test {
     
         
     static void click(String label, AutomationObject obj, int level) throws InterruptedException {
+        
+        
+        
         List<AutomationObject> chld = obj.getChildItems();
         
         final Oleacc oleacc = Oleacc.INSTANCE;
@@ -103,6 +111,10 @@ public class Test {
             
             final Ole32 ole32 = Ole32.INSTANCE;
             PointerByReference ptr2 = new PointerByReference();
+            PointerByReference ptr28 = new PointerByReference();
+            Memory mem = new Memory(1024*1024);
+            //Memory mem2 = new Memory(1024*1024);
+            //mem.setPointer(0, mem2);
             
             HRESULT h = ole32.CoCreateInstance(Ole32Util.getGUIDFromString("{ff48dba4-60ef-4201-aa87-54103eef594e}")
                     , Pointer.NULL, 1, Ole32Util.getGUIDFromString("{30cbe57d-d9d0-452a-ab13-7ac5ac4825ee}"), 
@@ -139,35 +151,84 @@ public class Test {
                 //vvv.putDispatchRef(pr);
                 
                 Variant vi = new Variant();
-                vi.putInt(hw);
-                  
-                int iii = 10;
+                vi.putInt(hw);                                  
                 
-                
+                Integer iii = 10;
+                                
                 IntByReference ir = new IntByReference();     
                 PointerByReference p = new PointerByReference(ir.getPointer());
                 
                 Variant vvv = new Variant();
-                vvv.putIntRef((int)Memory.nativeValue(p.getPointer()));
+                Pointer mmm = new Memory(1024*1024);
+                Pointer mmm2 = new Memory(1024*1024);
+                mmm2.setPointer(0, mmm);
+                Pointer mmm3 = new Memory(1024*1024);
+                mmm3.setPointer(0, mmm2);
+                //vvv.putInt((int)Memory.nativeValue(ir.getPointer()));
+                vvv.putInt((int)Memory.nativeValue(mmm2));
+                
+                //vvv.putIntRef(iii);
+                
+                //Memory.nativeValue(mem);
+                
+                Dispatch ddd = new Dispatch();
+                //ddd.m_pDispatch = (int)Memory.nativeValue(mem);
+                //Variant vvv = new Variant(Variant.VariantObject);
                 
                 //Dispatch.call(d2, "ElementFromHandle", vi, vvv);
-                Dispatch.call(d2, "GetRootElement", vvv);
+                //Dispatch.call(d2, "GetRootElement", new int[1][1]);
+                //Variant ret = Dispatch.call(d2, "GetRootElement");
             
+                IUnknown iu = ComObject.wrapNativeInterface(ptr2.getValue(), IUnknown.class); 
+                //iu.dispose();
+                IUIAutomation au = iu.queryInterface(IUIAutomation.class);
+                PointerByReference res2 = new PointerByReference();
+                au.ElementFromHandle(((Win32Object)ch).getHandle(), res2);
+                
+                System.err.println("res2 != null : " + (res2.getValue() != null));
+                
+                //res2.getValue().getPointer(0);
+                                
+                Dispatch el = new Dispatch();
+                el.m_pDispatch = (int)Memory.nativeValue(res2.getValue());
+                
+                System.err.println("mp: " + el.m_pDispatch);
+                
+                //Variant name = Dispatch.get(el, "CurrentName");
+                
+                IUnknown iu2 = ComObject.wrapNativeInterface(res2.getValue(), IUnknown.class); 
+                
+                IUIAutomationElement ae = iu2.queryInterface(IUIAutomationElement.class);
+                
+                PointerByReference ppr = new PointerByReference();
+                HRESULT nm = ae.get_CurrentName(ppr);
+                
+                
+                String str = NativeUtils.unknownLengthStringFromPointer(ppr.getValue());
+                        //NativeUtils.stripName(ppr.getValue().getCharArray(0, 500));
+                
+                System.err.println("CAPTION: " + ppr.getValue().getString(0, true));
+                
+                //System.err.println(ppr.getValue().getString(0));
+                
+                //String nm = name.getString();
             }
             System.err.println(((Win32Object)ch).getWndClass() +
                     ", " + Native.toString(data) +
                     ", " + v.getString());
         }
+        
+        
     }
     
     public static void main(String[] args) throws InterruptedException {
                 
+        
         final User32 usr = User32.INSTANCE;
         
         Win32Object obj = new Win32Object(null);
         
         click("Д&алее >", obj, 0);
-        
         
         
         
