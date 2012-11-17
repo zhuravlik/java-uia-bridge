@@ -135,4 +135,8 @@ public class Win32Object extends AutomationObject {
     public MSAAObject toMSAAObject() {
         return new MSAAObject(handle);
     }
+    
+    public UIAObject toUIAObject() throws Exception {
+        return new UIAObject(handle);
+    }
 }
