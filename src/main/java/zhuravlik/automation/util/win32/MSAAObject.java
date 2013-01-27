@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2012 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
+   Copyright (C) 2012-2013 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.List;
 import zhuravlik.automation.jna.*;
 import zhuravlik.automation.util.AutomationObject;
@@ -157,7 +158,7 @@ public class MSAAObject extends AutomationObject {
     }
 
     @Override
-    public Point[] getRectangle() {
+    public Rectangle getRectangle() {
         //throw new UnsupportedOperationException("Not supported yet.");
         /*Variant vv = new Variant();
         OleAut oa = OleAut.INSTANCE;
@@ -193,7 +194,7 @@ public class MSAAObject extends AutomationObject {
         pts[0] = new Point((int)left.getValue(), (int)top.getValue());
         pts[1] = new Point((int)(left.getValue() + width.getValue()), (int)(top.getValue() + height.getValue()));
         */
-        return pts;
+        return new Rectangle((int)left.getLong(), (int)top.getLong(), (int)width.getLong(), (int)height.getLong());
     }
 
     @Override

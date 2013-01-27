@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2012 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
+   Copyright (C) 2012-2013 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public

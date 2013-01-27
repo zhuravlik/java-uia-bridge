@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2012 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
+   Copyright (C) 2012-2013 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -20,7 +20,6 @@
 package zhuravlik.automation.jna;
 
 import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.WinDef.RECT;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.WinUser.POINT;
@@ -133,17 +132,17 @@ public interface IUIAutomationElement extends IUnknown {
     );
     
     @VTID(31)
-    HRESULT Get_CurrentHelpText(
+    HRESULT get_CurrentHelpText(
   /*[out, retval]*/  PointerByReference retVal
     );
     
     @VTID(32)
-    HRESULT Get_CurrentCulture(
+    HRESULT get_CurrentCulture(
   /*[out, retval]*/  IntByReference retVal
     );
     
     @VTID(33)
-    HRESULT Get_CurrentIsControlElement(
+    HRESULT get_CurrentIsControlElement(
   /*[out, retval]*/  IntByReference retVal
     );
     

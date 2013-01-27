@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2012 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
+   Copyright (C) 2012-2013 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -39,11 +39,11 @@ import zhuravlik.automation.jna.IUIAutomation;
 import zhuravlik.automation.jna.IUIAutomationElement;
 import zhuravlik.automation.jna.OleAut;
 import zhuravlik.automation.jna.Oleacc;
+import zhuravlik.automation.jna.patterns.WindowPattern;
+import zhuravlik.automation.jna.patterns.raw.IUIAutomationWindowPattern;
 import zhuravlik.automation.util.AutomationObject;
 import zhuravlik.automation.util.NativeUtils;
-import zhuravlik.automation.util.win32.MSAAObject;
-import zhuravlik.automation.util.win32.UIAObject;
-import zhuravlik.automation.util.win32.Win32Object;
+import zhuravlik.automation.util.win32.*;
 
 public class Test {
     
@@ -77,15 +77,26 @@ public class Test {
             
             //MSAAObject o = ((Win32Object)ch).toMSAAObject();                                    
             UIAObject uo = ((Win32Object)ch).toUIAObject();
+            
+            String nm = uo.getName();
+            ControlType ct = uo.getControlType();
+            if (nm.contains("NetBeans") && ct == ControlType.Window) {
+                //IUIAutomationWindowPattern ptrn = uo.<IUIAutomationWindowPattern>getPattern(IUIAutomationWindowPattern.class);                
+                
+                WindowPattern ptrn = uo.getPattern(WindowPattern.class);                
+                ptrn.setVisualState(WindowVisualState.Minimized);
+            }
             //uo.getCurrentProcessId();
             Method[] allM = uo.getClass().getMethods();
             
             for (Method m: allM) {
-                if (m.getName().startsWith("get") && m.getParameterTypes().length == 0) {
-                    try {
+                if ((m.getName().startsWith("get") || m.getName().startsWith("is")) 
+                        && m.getParameterTypes().length == 0) {
+                    try {                                                
+                        
                         System.err.print(m.getName() + ": " + m.invoke(uo) + ", ");
                     }
-                    catch (Exception e) { /* System.err.print(m.getName() + ": error, "); */}
+                    catch (Exception e) { System.err.print(m.getName() + ": FAIL: " + e.getMessage() + ", ");}
                 }
             }
             

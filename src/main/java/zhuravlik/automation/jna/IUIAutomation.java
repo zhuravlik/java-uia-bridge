@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2012 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
+   Copyright (C) 2012-2013 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -18,6 +18,7 @@
 */
 package zhuravlik.automation.jna;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.jnacom.IID;
@@ -33,4 +34,25 @@ public interface IUIAutomation extends IUnknown {
   /*[in]*/           HWND hwnd,
   /*[out, retval] */ PointerByReference element
     );
+    
+    @VTID(5)
+    public HRESULT GetRootElement(PointerByReference elt);
+    
+    @VTID(6)
+    public HRESULT GetFocusedElement(PointerByReference elt);
+    
+    @VTID(21)
+    public HRESULT CreateTrueCondition(PointerByReference v);
+    
+    @VTID(22)
+    public HRESULT CreateFalseCondition(PointerByReference v);
+    
+    @VTID(25)
+    public HRESULT CreateAndCondition(Pointer c1, Pointer c2, PointerByReference v);
+    
+    @VTID(28)
+    public HRESULT CreateOrCondition(Pointer c1, Pointer c2, PointerByReference v);
+    
+    @VTID(31)
+    public HRESULT CreateNotCondition(Pointer c, PointerByReference v);
 }

@@ -1,0 +1,49 @@
+/*
+   Copyright (C) 2012-2013 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
+
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Lesser General Public
+   License as published by the Free Software Foundation; either
+   version 3 of the License, or (at your option) any later version.
+
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+   Lesser General Public License for more details.
+
+   You should have received a copy of the GNU Lesser General
+   Public License along with this library; if not, write to the
+   Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+   Boston, MA 02110-1301 USA
+*/
+package zhuravlik.automation.jna.patterns;
+
+import com.sun.jna.ptr.IntByReference;
+import zhuravlik.automation.jna.patterns.raw.IUIAutomationExpandCollapsePattern;
+import zhuravlik.automation.util.win32.ExpandCollapseState;
+
+/**
+ *
+ * @author Администратор
+ */
+public class ExpandCollapsePattern {
+    private IUIAutomationExpandCollapsePattern rawPattern;
+    
+    public ExpandCollapsePattern(IUIAutomationExpandCollapsePattern rawPattern) {
+        this.rawPattern = rawPattern;
+    }
+    
+    public void Expand() {
+        rawPattern.Expand();
+    }
+    
+    public void Collapse() {
+        rawPattern.Collapse();
+    }
+    
+    public ExpandCollapseState getCurrentState() {
+        IntByReference state = new IntByReference();
+        rawPattern.Get_CurrentExpandCollapseState(state);        
+        return ExpandCollapseState.values()[state.getValue()];
+    }
+}

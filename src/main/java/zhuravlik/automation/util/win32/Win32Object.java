@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2012 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
+   Copyright (C) 2012-2013 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@ import com.sun.jna.platform.win32.WinDef.WPARAM;
 import com.sun.jna.platform.win32.WinUser;
 import com.sun.jna.ptr.PointerByReference;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.List;
 import zhuravlik.automation.jna.User32;
@@ -56,17 +57,18 @@ public class Win32Object extends AutomationObject {
         return usr.IsWindowVisible(handle);
     }
 
-    public Point[] getRectangle() {
+    @Override
+    public Rectangle getRectangle() {
         final User32 usr = User32.INSTANCE;
         RECT rect = new RECT();
         usr.GetWindowRect(handle, rect);
 
-        Point[] pts = new Point[2];
+        //Point[] pts = new Point[2];
 
-        pts[0] = new Point(rect.left, rect.top);
-        pts[1] = new Point(rect.right, rect.bottom);
+        //pts[0] = new Point(rect.left, rect.top);
+        //pts[1] = new Point(rect.right, rect.bottom);
 
-        return pts;
+        return new Rectangle(rect.left, rect.top, rect.right - rect.left, rect.top - rect.bottom);
     }
     
     public AutomationObject getParent() {
@@ -137,6 +139,6 @@ public class Win32Object extends AutomationObject {
     }
     
     public UIAObject toUIAObject() throws Exception {
-        return new UIAObject(handle);
+        return UIAObject.getFromHandle(handle);
     }
 }

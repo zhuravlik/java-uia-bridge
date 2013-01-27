@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2012 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
+   Copyright (C) 2012-2013 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -19,13 +19,14 @@
 package zhuravlik.automation.util;
 
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.List;
 
 public abstract class AutomationObject {
     public abstract List<AutomationObject> getChildItems();    
     public abstract AutomationObject getParent();
     
-    public abstract Point[] getRectangle();
+    public abstract Rectangle getRectangle();
     public abstract void mouseDown(Point p);
     public abstract void mouseUp(Point p);
     

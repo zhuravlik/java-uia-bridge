@@ -1,5 +1,5 @@
 /*
-   Copyright (C) 2012 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
+   Copyright (C) 2012-2013 Anton Lobov <zhuravlik> <ahmad200512[at]yandex.ru>
 
    This library is free software; you can redistribute it and/or
    modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,7 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import zhuravlik.automation.jna.IUIAutomation;
 import zhuravlik.automation.jna.IUIAutomationElement;
@@ -43,8 +44,42 @@ public class UIAObject extends AutomationObject {
     
     IUIAutomationElement uiaelement;
     
-    public UIAObject(WinDef.HWND hwnd) throws Exception {
-        final Ole32 ole32 = Ole32.INSTANCE;
+    private static UIAObject uiaObjectFromPointerByReference(PointerByReference p) throws Exception {
+        IUIAutomation au = getRootOleObject();
+        Dispatch el = new Dispatch();
+        el.m_pDispatch = (int)Memory.nativeValue(p.getValue());
+        IUnknown iu2 = ComObject.wrapNativeInterface(p.getValue(), IUnknown.class);
+        IUIAutomationElement elt = iu2.queryInterface(IUIAutomationElement.class);
+        return new UIAObject(elt);
+    }
+    
+    public static UIAObject getRootElement() throws Exception {
+        IUIAutomation au = getRootOleObject();
+        PointerByReference p = new PointerByReference();
+        au.GetRootElement(p);
+        return uiaObjectFromPointerByReference(p);
+    }
+    
+    public static UIAObject getFocusedElement() throws Exception {
+        IUIAutomation au = getRootOleObject();
+        PointerByReference p = new PointerByReference();
+        au.GetFocusedElement(p);
+        return uiaObjectFromPointerByReference(p);
+    }
+    
+    public static UIAObject getFromHandle(WinDef.HWND hwnd) throws Exception {
+        IUIAutomation au = getRootOleObject();
+        PointerByReference p = new PointerByReference();
+        au.ElementFromHandle(hwnd, p);
+        return uiaObjectFromPointerByReference(p);
+    }        
+    
+    private UIAObject(IUIAutomationElement elt) {
+        uiaelement = elt;
+    }
+    
+    private static IUIAutomation getRootOleObject() throws Exception {
+         final Ole32 ole32 = Ole32.INSTANCE;
             PointerByReference ptr2 = new PointerByReference();
             
             ole32.CoInitializeEx(Pointer.NULL, 2);
@@ -56,19 +91,11 @@ public class UIAObject extends AutomationObject {
             if (h.intValue() == 0) {            
                 IUnknown iu = ComObject.wrapNativeInterface(ptr2.getValue(), IUnknown.class); 
                 IUIAutomation au = iu.queryInterface(IUIAutomation.class);
-                PointerByReference res2 = new PointerByReference();
-                au.ElementFromHandle(hwnd, res2);
-                                
-                Dispatch el = new Dispatch();
-                el.m_pDispatch = (int)Memory.nativeValue(res2.getValue());
-                
-                IUnknown iu2 = ComObject.wrapNativeInterface(res2.getValue(), IUnknown.class); 
-                
-                uiaelement = iu2.queryInterface(IUIAutomationElement.class);                
+                return au;
             }
             else
                 throw new Exception("COM error getting UIA for element: " + h);
-    }
+    }        
 
     @Override
     public List<AutomationObject> getChildItems() {
@@ -81,8 +108,8 @@ public class UIAObject extends AutomationObject {
     }
 
     @Override
-    public Point[] getRectangle() {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public Rectangle getRectangle() {
+        return getBoundingRectangle();        
     }
 
     @Override
@@ -139,7 +166,7 @@ public class UIAObject extends AutomationObject {
     
     public String getHelpText() {
         PointerByReference ppr = new PointerByReference();
-        WinNT.HRESULT nm = uiaelement.Get_CurrentHelpText(ppr);                
+        WinNT.HRESULT nm = uiaelement.get_CurrentHelpText(ppr);                
         return ppr.getValue().getString(0, true);
     }
     
@@ -188,7 +215,7 @@ public class UIAObject extends AutomationObject {
     
     public int getCultureId() {
         IntByReference ppr = new IntByReference();
-        WinNT.HRESULT nm = uiaelement.Get_CurrentCulture(ppr);                
+        WinNT.HRESULT nm = uiaelement.get_CurrentCulture(ppr);                
         return ppr.getValue();
     }
     
@@ -228,7 +255,7 @@ public class UIAObject extends AutomationObject {
     
     public boolean isControlElement() {
         IntByReference ppr = new IntByReference();
-        WinNT.HRESULT nm = uiaelement.Get_CurrentIsControlElement(ppr);                
+        WinNT.HRESULT nm = uiaelement.get_CurrentIsControlElement(ppr);                
         return ppr.getValue() != 0;
     }
     
@@ -281,6 +308,61 @@ public class UIAObject extends AutomationObject {
     
     public void setFocus() {
         uiaelement.setFocus();
+    }
+    
+    /*public class Placeholder0<T> {        
+    }*/
+    
+    public class Placeholder<T> {    
+        T p;
+    }
+        
+    
+    public <T> T getPattern(Class<T> clazz) throws ClassNotFoundException, NoSuchMethodException, 
+            InstantiationException, IllegalAccessException, 
+            IllegalArgumentException, InvocationTargetException {                                
+        
+        String className = clazz.getSimpleName();
+        String patternName = className.replace("Pattern", "");
+        
+        ControlPattern patternKind = ControlPattern.valueOf(patternName);
+        
+        Class c = Class.forName("zhuravlik.automation.jna.patterns.raw.IUIAutomation" + patternName + "Pattern");
+        
+        IUnknown ptrn = getPatternRaw(patternKind);
+        IUnknown qq = ptrn.queryInterface(c);        
+        Object qqq = c.cast(qq);
+        
+        return clazz.getConstructor(c).newInstance(qqq);
+    }    
+    
+    // some reflection magic to not enumerate all cases manually
+    /*public Object getPattern(ControlPattern patternKind) throws ClassNotFoundException {
+        
+        String name = patternKind.name();
+                
+        Class c = Class.forName("IUIAutomation" + name + "Pattern");
+        
+        IUnknown ptrn = getPatternRaw(patternKind);
+        ptrn.queryInterface(c);
+        
+        
+        
+        
+        if (patternKind == ControlPattern.Window) {
+            IUnknown ptrn = getPatternRaw(ControlPattern.Window);
+            return new WindowPattern((IUIAutomationWindowPattern)ptrn.queryInterface(IUIAutomationWindowPattern.class));
+        }
+        else
+            return null;
+    }*/
+    
+    private IUnknown getPatternRaw(ControlPattern patternKind) {
+        PointerByReference pp = new PointerByReference();       
+        
+        uiaelement.getCurrentPattern(patternKind.getValue(), pp);
+        
+        return ComObject.wrapNativeInterface(pp.getValue(), IUnknown.class);
     }
     
     /*public UIAObject FindFirst(TreeScope scope, ISearchCondition condition) {
