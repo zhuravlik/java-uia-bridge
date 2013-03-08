@@ -18,6 +18,7 @@
 */
 package zhuravlik.automation.jna;
 
+import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
 import com.sun.jna.platform.win32.jnacom.IID;
 import com.sun.jna.platform.win32.jnacom.IUnknown;
@@ -25,7 +26,7 @@ import com.sun.jna.platform.win32.jnacom.VTID;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.LongByReference;
 import com.sun.jna.ptr.PointerByReference;
-import zhuravlik.automation.jna.ComDef.Variant;
+//import zhuravlik.automation.jna.ComDef.Variant;
 
 /**
  *

@@ -21,6 +21,10 @@ package zhuravlik.automation.util;
 import com.sun.jna.Pointer;
 import com.sun.jna.WString;
 import com.sun.jna.platform.win32.Guid;
+import com.sun.jna.platform.win32.jnacom.ComObject;
+import com.sun.jna.platform.win32.jnacom.IUnknown;
+import java.lang.reflect.Field;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 
 public class NativeUtils {
@@ -77,5 +81,12 @@ public class NativeUtils {
             guid.Data4[i] = ((Integer)arr[i]).byteValue();
         
         return guid;
+    }
+    
+    public static Pointer UnwrapNativeComInterface(IUnknown com) throws Exception {
+        ComObject comObj = (ComObject) Proxy.getInvocationHandler((Proxy)com);
+        Field fld = comObj.getClass().getDeclaredField("_InterfacePtr");
+        fld.setAccessible(true);
+        return (Pointer)fld.get(comObj);
     }
 }

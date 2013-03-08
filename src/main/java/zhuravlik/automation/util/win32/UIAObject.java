@@ -19,8 +19,6 @@
 
 package zhuravlik.automation.util.win32;
 
-import com.jacob.com.Dispatch;
-import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Ole32;
 import com.sun.jna.platform.win32.Ole32Util;
@@ -46,8 +44,8 @@ public class UIAObject extends AutomationObject {
     
     private static UIAObject uiaObjectFromPointerByReference(PointerByReference p) throws Exception {
         IUIAutomation au = getRootOleObject();
-        Dispatch el = new Dispatch();
-        el.m_pDispatch = (int)Memory.nativeValue(p.getValue());
+        //Dispatch el = new Dispatch();
+        //el.m_pDispatch = (int)Memory.nativeValue(p.getValue());
         IUnknown iu2 = ComObject.wrapNativeInterface(p.getValue(), IUnknown.class);
         IUIAutomationElement elt = iu2.queryInterface(IUIAutomationElement.class);
         return new UIAObject(elt);
@@ -78,7 +76,7 @@ public class UIAObject extends AutomationObject {
         uiaelement = elt;
     }
     
-    private static IUIAutomation getRootOleObject() throws Exception {
+    public static IUIAutomation getRootOleObject() throws Exception {
          final Ole32 ole32 = Ole32.INSTANCE;
             PointerByReference ptr2 = new PointerByReference();
             
@@ -327,6 +325,7 @@ public class UIAObject extends AutomationObject {
         
         ControlPattern patternKind = ControlPattern.valueOf(patternName);
         
+        // some reflection magic to not enumerate all cases manually
         Class c = Class.forName("zhuravlik.automation.jna.patterns.raw.IUIAutomation" + patternName + "Pattern");
         
         IUnknown ptrn = getPatternRaw(patternKind);
@@ -335,27 +334,6 @@ public class UIAObject extends AutomationObject {
         
         return clazz.getConstructor(c).newInstance(qqq);
     }    
-    
-    // some reflection magic to not enumerate all cases manually
-    /*public Object getPattern(ControlPattern patternKind) throws ClassNotFoundException {
-        
-        String name = patternKind.name();
-                
-        Class c = Class.forName("IUIAutomation" + name + "Pattern");
-        
-        IUnknown ptrn = getPatternRaw(patternKind);
-        ptrn.queryInterface(c);
-        
-        
-        
-        
-        if (patternKind == ControlPattern.Window) {
-            IUnknown ptrn = getPatternRaw(ControlPattern.Window);
-            return new WindowPattern((IUIAutomationWindowPattern)ptrn.queryInterface(IUIAutomationWindowPattern.class));
-        }
-        else
-            return null;
-    }*/
     
     private IUnknown getPatternRaw(ControlPattern patternKind) {
         PointerByReference pp = new PointerByReference();       

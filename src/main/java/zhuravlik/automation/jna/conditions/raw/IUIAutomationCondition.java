@@ -19,12 +19,13 @@
 package zhuravlik.automation.jna.conditions.raw;
 
 import com.sun.jna.platform.win32.jnacom.IID;
+import com.sun.jna.platform.win32.jnacom.IUnknown;
 
 /**
  *
  * @author Администратор
  */
 @IID("{352FFBA8-0973-437C-A61F-F64CAFD81DF9}")
-public interface IUIAutomationCondition {    
+public interface IUIAutomationCondition extends IUnknown {    
     
 }

@@ -16,19 +16,30 @@
    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301 USA
 */
-package zhuravlik.automation.jna.conditions.raw;
 
-import com.sun.jna.platform.win32.WinNT;
-import com.sun.jna.platform.win32.jnacom.IID;
-import com.sun.jna.platform.win32.jnacom.VTID;
+package zhuravlik.automation.jna.conditions;
+
+import com.sun.jna.platform.win32.jnacom.ComObject;
+import com.sun.jna.platform.win32.jnacom.IUnknown;
 import com.sun.jna.ptr.PointerByReference;
+import zhuravlik.automation.jna.IUIAutomation;
+import zhuravlik.automation.jna.conditions.raw.IUIAutomationBoolCondition;
+import zhuravlik.automation.util.win32.UIAObject;
 
 /**
  *
  * @author Администратор
  */
-@IID("{F528B657-847B-498C-8896-D52B565407A1}")
-public interface IUIAutomationNotCondition extends IUIAutomationCondition {
-    @VTID(3)
-    public WinNT.HRESULT GetChild(PointerByReference v);    
+public class BoolCondition extends Condition {
+    public BoolCondition(boolean value) throws Exception {
+        PointerByReference result = new PointerByReference();
+        IUIAutomation iua = UIAObject.getRootOleObject();
+        if (value)
+            iua.CreateTrueCondition(result);
+        else
+            iua.CreateFalseCondition(result);
+        
+        IUnknown iu2 = ComObject.wrapNativeInterface(result.getValue(), IUnknown.class);
+        rawCondition = iu2.queryInterface(IUIAutomationBoolCondition.class);
+    }    
 }

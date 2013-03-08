@@ -19,8 +19,10 @@
 package zhuravlik.automation.jna;
 
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Variant;
 import com.sun.jna.platform.win32.WinDef.HWND;
 import com.sun.jna.platform.win32.WinNT.HRESULT;
+import com.sun.jna.platform.win32.WinUser.POINT;
 import com.sun.jna.platform.win32.jnacom.IID;
 import com.sun.jna.platform.win32.jnacom.IUnknown;
 import com.sun.jna.platform.win32.jnacom.VTID;
@@ -29,23 +31,31 @@ import com.sun.jna.ptr.PointerByReference;
 
 @IID("{30cbe57d-d9d0-452a-ab13-7ac5ac4825ee}")
 public interface IUIAutomation extends IUnknown {
-    @VTID(6)
-    HRESULT ElementFromHandle(
-  /*[in]*/           HWND hwnd,
-  /*[out, retval] */ PointerByReference element
-    );
+    
     
     @VTID(5)
     public HRESULT GetRootElement(PointerByReference elt);
     
     @VTID(6)
+    public HRESULT ElementFromHandle(HWND hwnd, PointerByReference element);
+    
+    @VTID(7)
+    public HRESULT ElementFromPoint(POINT pt, PointerByReference element);
+    
+    @VTID(8)
     public HRESULT GetFocusedElement(PointerByReference elt);
+    
+    @VTID(9)
+    public HRESULT CreateTreeWalker(Pointer uiaCondition, PointerByReference walker);
     
     @VTID(21)
     public HRESULT CreateTrueCondition(PointerByReference v);
     
     @VTID(22)
     public HRESULT CreateFalseCondition(PointerByReference v);
+    
+    @VTID(23)
+    public HRESULT CreatePropertyCondition(int propertyId, Variant value, PointerByReference result);
     
     @VTID(25)
     public HRESULT CreateAndCondition(Pointer c1, Pointer c2, PointerByReference v);

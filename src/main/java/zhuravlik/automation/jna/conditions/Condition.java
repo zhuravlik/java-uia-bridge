@@ -16,19 +16,23 @@
    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301 USA
 */
-package zhuravlik.automation.jna.conditions.raw;
 
-import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.jnacom.IID;
-import com.sun.jna.platform.win32.jnacom.VTID;
-import com.sun.jna.ptr.IntByReference;
+package zhuravlik.automation.jna.conditions;
+
+import zhuravlik.automation.jna.conditions.raw.IUIAutomationCondition;
 
 /**
  *
  * @author Администратор
  */
-@IID("{1B4E1F2E-75EB-4D0B-8952-5A69988E2307}")
-public interface IUIAutomationBoolCondition extends IUIAutomationCondition {
-    @VTID(3)
-    public HRESULT Get_BooleanValue(IntByReference v);
+public class Condition {
+    protected IUIAutomationCondition rawCondition;
+    
+    protected IUIAutomationCondition getRawCondition() {
+        return rawCondition;
+    }
+    
+    /*protected Condition(IUIAutomationCondition rawCondition) {
+        this.rawCondition = rawCondition;
+    }*/
 }

@@ -29,7 +29,7 @@ import com.sun.jna.ptr.PointerByReference;
  * @author Администратор
  */
 @IID("{A7D0AF36-B912-45FE-9855-091DDC174AEC}")
-public interface IUIAutomationAndCondition {
+public interface IUIAutomationAndCondition extends IUIAutomationCondition {
     
     @VTID(3)
     public HRESULT Get_ChildCount(IntByReference v);

@@ -89,7 +89,7 @@ public class MSAAObject extends AutomationObject {
     
     public void doDefaultAction() {
         Dispatch.call(dispatch, "accDoDefaultAction");
-        ComDef.Variant v = new ComDef.Variant();
+        //ComDef.Variant v = new ComDef.Variant();
         //v.vt = ComVarTypes.VT_I4;
         //v.u.lVal = 0;
         //iAccessible.accDoDefaultAction(0);

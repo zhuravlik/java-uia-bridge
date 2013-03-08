@@ -16,26 +16,33 @@
    Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
    Boston, MA 02110-1301 USA
 */
-package zhuravlik.automation.jna.conditions.raw;
 
-import com.sun.jna.platform.win32.WinNT.HRESULT;
-import com.sun.jna.platform.win32.jnacom.IID;
-import com.sun.jna.platform.win32.jnacom.VTID;
-import com.sun.jna.ptr.IntByReference;
+package zhuravlik.automation.jna.conditions;
+
+import com.sun.jna.platform.win32.jnacom.ComObject;
+import com.sun.jna.platform.win32.jnacom.IUnknown;
 import com.sun.jna.ptr.PointerByReference;
+import zhuravlik.automation.jna.IUIAutomation;
+import zhuravlik.automation.jna.conditions.raw.IUIAutomationNotCondition;
+import zhuravlik.automation.util.NativeUtils;
+import zhuravlik.automation.util.win32.UIAObject;
 
 /**
  *
  * @author Администратор
  */
-@IID("{99EBF2CB-5578-4267-9AD4-AFD6EA77E94B}")
-public interface IUIAutomationPropertyCondition extends IUIAutomationCondition {
-    @VTID(3)
-    public HRESULT Get_propertyId(IntByReference v);
+public class NotCondition extends Condition {
+
+    public NotCondition(Condition cond) throws Exception {
+        PointerByReference result = new PointerByReference();
+        IUIAutomation iua = UIAObject.getRootOleObject();
+        
+        iua.CreateNotCondition(
+                NativeUtils.UnwrapNativeComInterface(cond.getRawCondition()),
+                result);
+        
+        IUnknown iu2 = ComObject.wrapNativeInterface(result.getValue(), IUnknown.class);
+        rawCondition = iu2.queryInterface(IUIAutomationNotCondition.class);
+    }
     
-    @VTID(4)
-    public HRESULT Get_PropertyValue(PointerByReference v);
-    
-    @VTID(5)
-    public HRESULT Get_PropertyConditionFlags(IntByReference v);
 }

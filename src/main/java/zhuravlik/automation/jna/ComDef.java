@@ -34,7 +34,7 @@ import com.sun.jna.ptr.ShortByReference;
  *
  * @author Администратор
  */
-public interface ComDef {
+/*public interface ComDef {
 
     public static class Variant extends Structure {
         
@@ -93,4 +93,4 @@ public interface ComDef {
             }
         }
     }
-}
+}*/
